@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English 4 – Mid-term 1 Revision Challenge</title>
+<style>
+/* ===== Giao diện: xanh dương, xanh ngọc, vàng, cam nhạt ===== */
+*{box-sizing:border-box}
+body{margin:0;font:18px/1.45 "Trebuchet MS","Segoe UI",system-ui,sans-serif;background:linear-gradient(#cdeffd,#fff3cf);min-height:100vh;color:#14375e}
+#app{max-width:760px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:24px;padding:18px;margin:12px 0;box-shadow:0 6px 0 #9fd8ee;animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+h1{color:#0a8f9c;text-align:center;margin:6px 0;font-size:1.5em}
+h3{margin:8px 0 12px}
+button{font:inherit;font-weight:700;border:0;border-radius:16px;padding:12px 18px;margin:5px;background:#ffc93c;color:#14375e;cursor:pointer;box-shadow:0 4px 0 #d9a21b}
+button:active{transform:translateY(3px);box-shadow:none}
+button:focus-visible,input:focus-visible{outline:3px solid #1e88e5}
+button.b{background:#1e88e5;color:#fff;box-shadow:0 4px 0 #14609f}
+button.o{display:block;width:100%;text-align:left;background:#eaf7ff;box-shadow:0 3px 0 #9fd8ee;margin:7px 0}
+.ok{background:#bff0c8!important}.no{background:#ffc9a8!important}.sel{outline:3px solid #1e88e5}
+.bar{height:14px;background:#e3eef5;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#1fbf9f}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+input{font:inherit;padding:10px;border:3px solid #9fd8ee;border-radius:12px;width:100%;margin:6px 0}
+.ps{background:#fff8dc;padding:10px;border-radius:12px;border-left:6px solid #ffc93c;margin-bottom:10px}
+.fb{padding:12px;border-radius:14px;margin-top:10px}
+.st{position:fixed;font-size:28px;animation:up 1s forwards;pointer-events:none}
+@keyframes up{to{transform:translateY(-130px);opacity:0}}
+#snd{position:fixed;top:8px;right:8px;z-index:9}
+.c{text-align:center}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@media print{button,#snd,.np{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #999}}
+</style></head><body>
+<button id="snd" onclick="S.snd=!S.snd;this.textContent=S.snd?'🔊':'🔇'">🔊</button>
+<div id="app"></div>
+<script>
+/* ===== 10 chủ đề ===== */
+const TOP=["Quốc gia","Các ngày trong tuần","Tháng & sinh nhật","Giờ & thói quen","Đồ ăn & thức uống","Sở thích & khả năng","Ngữ pháp tổng hợp","Từ khác loại","Đọc hiểu","Sắp xếp câu & ôn tổng hợp"];
+const IC=["🌏","📅","🎂","⏰","🍇","🎸","✏️","🔍","📖","🧩"];
+/* ===== Đoạn đọc cho chủ đề 9 ===== */
+const P=["Hi, I'm Tom. I'm from America. I get up at half past six. I go to school at seven. I can ride a bike, but I can't swim.",
+"My name's Anna. I'm from Australia. My birthday is in May. It's on May 10th. I want a birthday party with grapes and lemonade.",
+"Ben is from Japan. On Sunday, he listens to music. He can play the guitar. He can't cook.",
+"Lucy is from Singapore. She gets up at six o'clock and has breakfast. She wants some lemon juice. She can ride a horse."];
+/* ===== Ngân hàng 100 câu (mỗi hàm tạo một dạng bài; đáp án đúng của mc/cp nằm ở vị trí đầu, được xáo trộn khi hiển thị) ===== */
+const R=[],TF=["True","False"];
+const add=(ty,t,q,o,a,e,p)=>R.push({type:ty,topic:t,q,options:o,answer:a,explanation:e,passage:p,points:10});
+const mc=(t,q,o,e)=>add("mc",t,q,o,0,e), cp=(t,q,o,e)=>add("cp",t,q,o,0,e);
+const tf=(t,q,v,e)=>add("tf",t,q,TF,v?0:1,e), fl=(t,q,a,e)=>add("fill",t,q,0,a,e);
+const lt=(t,w,a,e)=>add("let",t,"Điền chữ cái còn thiếu: "+w,0,a,e);
+const mt=(t,o,e)=>add("mt",t,"Nối: "+o.map(x=>x[0]).join(" / "),o,0,e);
+const od=(t,o,e)=>add("od",t,"Which word is different?",o,2,e);
+const rd=(p,q,o,a,e)=>add("rd",8,q,o,a,e,p), so=(t,w,a,e)=>add("or",t,"Sắp xếp các từ thành câu đúng:",w,a,e);
+/* Chủ đề 1: Quốc gia */
+mc(0,"Where are you from?",["I'm from Viet Nam.","I'm fine.","It's Monday."],"Hỏi quê hương thì trả lời I'm from...");
+mc(0,"Which word is a country?",["Japan","Monday","juice"],"Japan là tên một quốc gia.");
+mc(0,"Where is he from?",["He is from Australia.","He is seven.","He can swim."],"Where is he from? hỏi quê của bạn nam.");
+mc(0,"'America' nghĩa là gì?",["Nước Mỹ","Nước Anh","Nước Úc"],"America là nước Mỹ.");
+tf(0,"'I'm from Singapore.' nghĩa là Tôi đến từ Singapore.",true,"Đúng, I'm from... = Tôi đến từ...");
+fl(0,"Where ___ you from? – I'm from Japan.","are","Với you ta dùng are.");
+lt(0,"J_p_n","Japan","Japan là nước Nhật.");
+mt(0,[["Where are you from?","I'm from Viet Nam."],["Where is she from?","She is from Britain."],["Where is he from?","He is from America."]],"Hỏi quê quán thì trả lời bằng from + tên nước.");
+cp(0,"He is ___ Australia.",["from","at","on"],"Dùng from để nói đến từ nước nào.");
+cp(0,"She ___ from Singapore.",["is","am","are"],"She đi với is.");
+/* Chủ đề 2: Các ngày trong tuần */
+mc(1,"What day is it today?",["It's Monday.","It's seven o'clock.","It's in May."],"Hỏi thứ thì trả lời It's + thứ.");
+mc(1,"What do you do on Sunday?",["I listen to music.","It's Friday.","I'm from Japan."],"Câu hỏi về việc làm vào Chủ nhật.");
+mc(1,"Which is a day of the week?",["Saturday","April","grapes"],"Saturday là thứ Bảy.");
+mc(1,"Which day comes after Friday?",["Saturday","Wednesday","Tuesday"],"Sau thứ Sáu là thứ Bảy.");
+tf(1,"Tuesday is a month.",false,"Sai, Tuesday là thứ Ba.");
+fl(1,"What do you do ___ Sunday?","on","Dùng on trước ngày trong tuần.");
+lt(1,"Fr_d_y","Friday","Friday là thứ Sáu.");
+mt(1,[["What day is it today?","It's Saturday."],["What do you do on Sunday?","I listen to music."],["What day is it today?","It's Wednesday."]],"Hỏi thứ thì đáp It's + thứ; hỏi việc làm thì nêu hoạt động.");
+cp(1,"I listen to music ___ Sunday.",["on","in","at"],"on + ngày trong tuần.");
+cp(1,"It's ___ today.",["Wednesday","January","May"],"Chỉ Wednesday là thứ trong tuần.");
+/* Chủ đề 3: Tháng & sinh nhật */
+mc(2,"When's your birthday?",["It's in May.","It's Monday.","I'm from Japan."],"Hỏi sinh nhật thì đáp bằng tháng hoặc ngày tháng.");
+mc(2,"Which word is a month?",["June","Sunday","lemonade"],"June là tháng Sáu.");
+mc(2,"'birthday party' nghĩa là gì?",["bữa tiệc sinh nhật","bữa sáng","ngày thứ Hai"],"birthday party là tiệc sinh nhật.");
+mc(2,"Which month comes after April?",["May","February","January"],"Sau tháng Tư là tháng Năm.");
+tf(2,"'It's in June 15th.' is correct.",false,"Sai, ngày cụ thể dùng on: It's on June 15th.");
+fl(2,"It's ___ May.","in","Tháng dùng in.");
+lt(2,"Ja_u_ry","January","January là tháng Một.");
+lt(2,"F_br_ary","February","February là tháng Hai.");
+mt(2,[["When's your birthday?","It's in May."],["When's his birthday?","It's on June 15th."],["When's her birthday?","It's in February."]],"Tháng dùng in, ngày tháng cụ thể dùng on.");
+cp(2,"It's ___ June 15th.",["on","in","at"],"Ngày tháng cụ thể dùng on.");
+/* Chủ đề 4: Giờ & thói quen */
+mc(3,"What time is it?",["It's seven o'clock.","It's Monday.","It's in May."],"Hỏi giờ thì đáp bằng giờ.");
+mc(3,"What time do you go to school?",["I go to school at seven.","I go to school on Monday.","I'm from Japan."],"Giờ giấc dùng at.");
+mc(3,"'get up' nghĩa là gì?",["thức dậy","đi ngủ","ăn sáng"],"get up là thức dậy.");
+mc(3,"What time does Nam go to bed?",["He goes to bed at nine o'clock.","He is nine.","He can swim."],"Hỏi giờ đi ngủ thì đáp giờ cụ thể.");
+tf(3,"Half past six is 6:30.",true,"Đúng, half past six là sáu giờ rưỡi.");
+tf(3,"'go to bed' means 'ăn sáng'.",false,"Sai, go to bed là đi ngủ.");
+fl(3,"I go to school ___ seven.","at","Giờ dùng at.");
+lt(3,"Br_akf_st","Breakfast","Breakfast là bữa sáng.");
+mt(3,[["What time is it?","It's seven o'clock."],["What time do you get up?","I get up at half past six."],["What time does Nam go to bed?","He goes to bed at nine."]],"Hỏi giờ thì đáp bằng giờ.");
+cp(3,"Nam ___ to bed at nine.",["goes","go","going"],"Chủ ngữ Nam (số ít) dùng goes.");
+/* Chủ đề 5: Đồ ăn & thức uống */
+mc(4,"What do you want to drink?",["I want some lemonade.","I go to school.","It's Monday."],"Trả lời bằng I want some + đồ uống.");
+mc(4,"What does he want to drink?",["He wants some lemon juice.","He is from Japan.","He can cook."],"Với he dùng wants.");
+mc(4,"'grapes' nghĩa là gì?",["nho","khoai tây chiên","nước chanh"],"grapes là quả nho.");
+tf(4,"'chips' means khoai tây chiên.",true,"Đúng, chips là khoai tây chiên.");
+fl(4,"I ___ some lemonade.","want","Với I dùng want.");
+fl(4,"He ___ some lemon juice.","wants","Với he dùng wants.");
+lt(4,"l_m_nade","lemonade","lemonade là nước chanh.");
+mt(4,[["What do you want to drink?","I want some lemonade."],["What does she want to drink?","She wants some juice."],["What does he want to drink?","He wants some lemon juice."]],"I want..., he/she wants...");
+cp(4,"I want some ___ .",["juice","swim","Monday"],"juice là đồ uống.");
+cp(4,"He ___ some grapes.",["wants","want","is"],"He đi với wants.");
+/* Chủ đề 6: Sở thích & khả năng */
+mc(5,"Can you cook?",["Yes, I can.","Yes, it is.","I'm from Japan."],"Câu hỏi Can... trả lời Yes, I can.");
+mc(5,"Can she ride a bike?",["Yes, she can.","Yes, I am.","No, I don't."],"Hỏi về she thì đáp she can.");
+mc(5,"'roller skate' nghĩa là gì?",["trượt patin","cưỡi ngựa","bơi"],"roller skate là trượt patin.");
+tf(5,"'He can't swim' means Cậu ấy không biết bơi.",true,"Đúng, can't là không thể.");
+tf(5,"'Can he swim?' – 'Yes, he can't.' is correct.",false,"Sai, Yes đi với can, No đi với can't.");
+fl(5,"She can ___ a horse.","ride","Sau can dùng động từ nguyên mẫu: ride.");
+lt(5,"g_it_r","guitar","guitar là đàn ghi-ta.");
+mt(5,[["Can you cook?","Yes, I can."],["Can he swim?","No, he can't."],["Can she ride a bike?","Yes, she can."]],"Câu hỏi với Can trả lời Yes, ... can hoặc No, ... can't.");
+cp(5,"He can't swim, ___ he can cook.",["but","at","on"],"but nối hai ý trái nhau.");
+cp(5,"I can play the ___ .",["piano","lemonade","Monday"],"play the piano là chơi đàn piano.");
+/* Chủ đề 7: Ngữ pháp tổng hợp */
+mc(6,"I ___ from Viet Nam.",["am","is","are"],"I đi với am.");
+mc(6,"What time ___ Nam get up?",["does","do","is"],"Chủ ngữ Nam dùng does.");
+mc(6,"She can ___ the piano.",["play","plays","playing"],"Sau can dùng động từ nguyên mẫu.");
+tf(6,"'She can swims.' is correct.",false,"Sai, sau can dùng swim.");
+tf(6,"'He wants some juice.' is correct.",true,"Đúng, he đi với wants.");
+fl(6,"They ___ from Japan.","are","They đi với are.");
+fl(6,"What time ___ you go to school?","do","Với you dùng do.");
+lt(6,"w_nts","wants","He/She dùng wants.");
+mt(6,[["I","am"],["He","is"],["They","are"]],"I-am, he/she-is, we/you/they-are.");
+mt(6,[["He can","swim."],["I go to school","at seven."],["It's","in May."]],"Ghép đúng cụm từ để thành câu.");
+/* Chủ đề 8: Từ khác loại (đáp án luôn là từ thứ ba) */
+od(7,["Monday","Tuesday","January"],"January là tháng, còn lại là thứ trong tuần.");
+od(7,["Japan","Singapore","Sunday"],"Sunday là thứ, còn lại là quốc gia.");
+od(7,["juice","lemonade","grapes"],"grapes là đồ ăn, còn lại là đồ uống.");
+od(7,["swim","cook","May"],"May là tháng, còn lại là hoạt động.");
+od(7,["piano","guitar","horse"],"horse là con ngựa, còn lại là nhạc cụ.");
+od(7,["April","June","Friday"],"Friday là thứ, còn lại là tháng.");
+od(7,["Viet Nam","America","chips"],"chips là đồ ăn, còn lại là quốc gia.");
+od(7,["get up","go to bed","birthday"],"birthday là sinh nhật, còn lại là việc hằng ngày.");
+od(7,["breakfast","chips","Britain"],"Britain là quốc gia, còn lại là đồ ăn.");
+od(7,["swim","ride a bike","lemonade"],"lemonade là đồ uống, còn lại là hoạt động.");
+/* Chủ đề 9: Đọc hiểu */
+rd(0,"Tom is from Britain.",TF,1,"Đoạn văn: Tom is from America.");
+rd(0,"Tom goes to school at seven.",TF,0,"Đoạn văn: I go to school at seven.");
+rd(0,"What can Tom do?",["He can ride a bike.","He can swim.","He can cook."],0,"Tom can ride a bike nhưng can't swim.");
+rd(1,"Anna's birthday is in June.",TF,1,"Sinh nhật của Anna là tháng Năm.");
+rd(1,"Where is Anna from?",["Australia","Japan","Singapore"],0,"Anna is from Australia.");
+rd(1,"What does Anna want to drink?",["Lemonade","Juice","Milk"],0,"Bài đọc nhắc đến lemonade.");
+rd(2,"Ben can play the guitar.",TF,0,"Đoạn văn: He can play the guitar.");
+rd(2,"What does Ben do on Sunday?",["He listens to music.","He goes to school.","He rides a horse."],0,"On Sunday, he listens to music.");
+rd(3,"What time does Lucy get up?",["At six o'clock.","At seven.","At nine."],0,"She gets up at six o'clock.");
+rd(3,"Lucy can't ride a horse.",TF,1,"Đoạn văn: She can ride a horse.");
+/* Chủ đề 10: Sắp xếp câu & ôn tổng hợp */
+so(9,["am","from","I","Viet Nam"],"I am from Viet Nam.","Mẫu câu: I am from + nước.");
+so(9,["school","I","at","go","to","seven"],"I go to school at seven.","Mẫu câu: I go to school at + giờ.");
+so(9,["can","She","a","ride","bike"],"She can ride a bike.","Mẫu câu: She can + động từ.");
+so(9,["birthday","When's","your"],"When's your birthday?","Câu hỏi sinh nhật.");
+so(9,["wants","He","lemon juice","some"],"He wants some lemon juice.","He + wants + some + đồ uống.");
+fl(9,"What ___ is it? – It's seven o'clock.","time","Hỏi giờ: What time is it?");
+lt(9,"Sun_ay","Sunday","Sunday là Chủ nhật.");
+lt(9,"b_rthd_y","birthday","birthday là sinh nhật.");
+mt(9,[["What day is it today?","It's Friday."],["When's your birthday?","It's on June 15th."],["Can you roller skate?","Yes, I can."]],"Ôn hỗn hợp: thứ, sinh nhật, khả năng.");
+mt(9,[["What do you want to drink?","I want some juice."],["What time is it?","It's half past six."],["Where is she from?","She is from Japan."]],"Ôn hỗn hợp: đồ uống, giờ, quốc gia.");
+R.forEach((x,i)=>x.id="Q"+String(i+1).padStart(3,"0"));
+
+/* ===== Trạng thái & tiện ích ===== */
+const S={name:"",snd:true,wrong:[]};let G=null;
+try{S.name=localStorage.getItem("e4n")||""}catch(e){}
+const A=document.getElementById("app"),$=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const nm=s=>String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[.?!,]/g,"").replace(/\s+/g," ").trim(); // chuẩn hóa khi chấm
+function beep(ok){if(!S.snd)return;try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=ok?880:220;o.start();o.stop(c.currentTime+.2)}catch(e){}}
+function stars(){for(let i=0;i<8;i++){const s=document.createElement("span");s.className="st";s.textContent="⭐";s.style.left=(10+Math.random()*80)+"%";s.style.top=(40+Math.random()*30)+"%";document.body.appendChild(s);setTimeout(()=>s.remove(),1000)}}
+function sn(){S.name=$("#nm").value.trim();try{localStorage.setItem("e4n",S.name)}catch(e){}}
+const ans=q=>q.type=="mt"?q.options.map(p=>p[0]+" → "+p[1]).join("; "):q.options&&q.type!="or"?q.options[q.answer]:q.answer.replace("|"," / ");
+
+/* ===== Màn hình ===== */
+function home(){let last="";try{const r=JSON.parse(localStorage.getItem("e4r"));if(r)last=`<p class=c>Kết quả gần nhất: ${esc(r.n||"Học sinh")} – ${r.p}% – ${r.s} điểm</p>`}catch(e){}
+A.innerHTML=`<div class=card><h1>🏆 ENGLISH 4 – MID-TERM 1 REVISION CHALLENGE</h1><p class=c><b>CHINH PHỤC 100 CÂU TIẾNG ANH LỚP 4 – ÔN TẬP GIỮA HỌC KỲ 1</b><br>📚✏️⭐ 100 câu hỏi, 10 chủ đề, vừa học vừa chơi!</p>
+${S.name?`<p class=c>Xin chào, <b>${esc(S.name)}</b>! 👋</p>`:""}<input id=nm maxlength=20 placeholder="Nhập tên của em (không bắt buộc)" value="${esc(S.name)}" oninput="sn()">
+<div class=c><button class=b onclick="sn();start(sh(R),'full')">BẮT ĐẦU</button><button onclick="sn();topics()">CHỌN CHỦ ĐỀ</button><button onclick="sn();practice()">LUYỆN TẬP</button><button onclick="guide()">HƯỚNG DẪN</button></div>${last}</div>
+<div class=card><h3>📋 100 câu hỏi – 10 chủ đề</h3><div class=g>${TOP.map((t,i)=>`<div class=ps>${IC[i]} <b>${t}</b><br>10 câu</div>`).join("")}</div></div>`}
+function topics(){A.innerHTML=`<div class=card><h1>CHỌN CHỦ ĐỀ</h1><div class=g>${TOP.map((t,i)=>`<button onclick="start(sh(R.filter(q=>q.topic==${i})),'topic')">${IC[i]} ${t}</button>`).join("")}</div><button onclick="home()">🏠 Trang chủ</button></div>`}
+function practice(){A.innerHTML=`<div class=card><h1>LUYỆN TẬP</h1><div class=c><button class=b onclick="start(sh(R).slice(0,10),'quick')">Kiểm tra nhanh 10 câu</button><button class=b onclick="start(sh(R).slice(0,20),'quick')">Kiểm tra nhanh 20 câu</button><button onclick="review()">Ôn câu sai (${S.wrong.length})</button><button onclick="home()">🏠 Trang chủ</button></div></div>`}
+function guide(){A.innerHTML=`<div class=card><h1>HƯỚNG DẪN</h1><p>• BẮT ĐẦU: làm cả 100 câu, thứ tự ngẫu nhiên.<br>• CHỌN CHỦ ĐỀ: luyện 10 câu của một chủ đề.<br>• LUYỆN TẬP: kiểm tra nhanh 10/20 câu hoặc ôn lại câu sai.<br>• Mỗi câu đúng được 10 điểm, câu sai không bị trừ điểm.<br>• Câu nối cặp: chọn câu bên trái rồi chọn câu trả lời bên phải.<br>• Câu sắp xếp: bấm các từ theo thứ tự, bấm lại từ đã chọn để bỏ ra.<br>• Câu điền từ: gõ đáp án rồi bấm KIỂM TRA (hoặc Enter).<br>• Nút 🔊 ở góc phải để bật/tắt âm thanh.</p><button class=b onclick="home()">🏠 Trang chủ</button></div>`}
+function review(){if(!S.wrong.length)return alert("Chưa có câu sai nào để ôn! 🎉");start(sh(R.filter(q=>S.wrong.includes(q.id))),"review",true)}
+
+/* ===== Lượt chơi ===== */
+function start(list,mode,rev){G={list,i:0,sc:0,ok:0,no:0,mode,rev:!!rev,t0:Date.now(),by:{},wr:[]};show()}
+function show(){const q=G.list[G.i];G.a=0;
+A.innerHTML=`<div class="card np"><div style="display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap"><span>Câu ${G.i+1}/${G.list.length}</span><span>${IC[q.topic]} ${TOP[q.topic]}</span><span>⭐ ${G.sc}</span></div><div class=bar><i style="width:${G.i/G.list.length*100}%"></i></div></div>
+<div class=card>${q.passage!=null?`<div class=ps>📖 ${esc(P[q.passage])}</div>`:""}<h3>${esc(q.q)}</h3><div id=bd></div><div id=fb></div></div><div class=c><button onclick="home()">🏠 Trang chủ</button></div>`;
+const b=$("#bd"),t=q.type;
+if(t=="mc"||t=="cp"||t=="tf"||t=="od"||t=="rd"){G.p=q.options.map((_,i)=>i);if(t!="tf"&&q.options[0]!="True")G.p=sh(G.p);
+ b.innerHTML=G.p.map((i,k)=>`<button class=o onclick="pick(${i})">${"ABC"[k]}. ${esc(q.options[i])}</button>`).join("")}
+else if(t=="fill"||t=="let"){b.innerHTML=`<input id=in autocomplete=off placeholder="Viết đáp án..." onkeydown="if(event.key=='Enter')chk()"><button class=b onclick="chk()">KIỂM TRA</button>`;$("#in").focus()}
+else if(t=="mt"){G.m={l:null,n:0,bad:0,d:{}};G.rp=sh(q.options.map((_,i)=>i));
+ b.innerHTML=`<div class=g><div>${q.options.map((p,i)=>`<button class=o id=l${i} onclick="ml(${i})">${esc(p[0])}</button>`).join("")}</div><div>${G.rp.map(i=>`<button class=o id=r${i} onclick="mr(${i})">${esc(q.options[i][1])}</button>`).join("")}</div></div>`}
+else{G.w=sh(q.options);G.t=[];ro()}}
+function pick(i){if(G.a)return;const q=G.list[G.i],bs=[...document.querySelectorAll("#bd .o")];
+ bs.forEach((b,k)=>{if(G.p[k]==q.answer)b.classList.add("ok")});if(i!=q.answer)bs[G.p.indexOf(i)].classList.add("no");end(i==q.answer)}
+function chk(){if(G.a)return;const q=G.list[G.i],v=nm($("#in").value);if(!v)return;end(q.answer.split("|").some(x=>nm(x)==v))}
+function ml(i){if(G.a||G.m.d[i])return;G.m.l=i;document.querySelectorAll("[id^=l]").forEach(b=>b.classList.remove("sel"));$("#l"+i).classList.add("sel")}
+function mr(j){if(G.a||G.m.l==null||G.m.d[j])return;const i=G.m.l,m=G.m;
+ if(i==j){m.d[i]=1;$("#l"+i).classList.replace("sel","ok");$("#r"+j).classList.add("ok");if(++m.n==G.list[G.i].options.length)end(!m.bad)}
+ else{m.bad=1;beep(0);const r=$("#r"+j);r.classList.add("no");setTimeout(()=>r.classList.remove("no"),500);$("#l"+i).classList.remove("sel")}m.l=null}
+function ro(){$("#bd").innerHTML=`<div class=ps style="min-height:56px">${G.t.map((w,k)=>`<button onclick="ou(${k})">${esc(G.w[w])}</button>`).join("")}</div><div>${G.w.map((w,k)=>G.t.includes(k)?"":`<button class=o style="display:inline-block;width:auto" onclick="oa(${k})">${esc(w)}</button>`).join("")}</div><button class=b onclick="oc()">KIỂM TRA</button><button onclick="G.t=[];ro()">XÓA</button>`}
+function oa(k){if(G.a)return;G.t.push(k);ro()}
+function ou(k){if(G.a)return;G.t.splice(k,1);ro()}
+function oc(){if(G.a||!G.t.length)return;end(nm(G.t.map(k=>G.w[k]).join(" "))==nm(G.list[G.i].answer))}
+function end(ok){if(G.a)return;G.a=1;const q=G.list[G.i],t=G.by[q.topic]=G.by[q.topic]||{ok:0,n:0}; // G.a bảo đảm chỉ tính điểm một lần
+ t.n++;if(ok){G.ok++;t.ok++;if(!G.rev)G.sc+=q.points;S.wrong=S.wrong.filter(x=>x!=q.id)}else{G.no++;G.wr.push(q);if(!S.wrong.includes(q.id))S.wrong.push(q.id)}
+ beep(ok);if(ok)stars();
+ $("#fb").innerHTML=`<div class="fb ${ok?"ok":"no"}"><b>${ok?"Correct! Excellent! 🌟":"Not quite! Try again! 💪"}</b><br>Đáp án đúng: <b>${esc(ans(q))}</b><br>💡 ${esc(q.explanation)}<br><button class=b onclick="nx()">${G.i+1<G.list.length?"CÂU TIẾP THEO":"XEM KẾT QUẢ"}</button></div>`}
+function nx(){G.i++;G.i<G.list.length?show():summary()}
+
+/* ===== Tổng kết ===== */
+function summary(){const n=G.list.length,p=Math.round(G.ok/n*100),sec=Math.round((Date.now()-G.t0)/1000);
+const ti=p>=90?"🌟 SUPER ENGLISH STAR":p>=75?"👍 GREAT JOB":p>=50?"🙂 GOOD PROGRESS":"💪 KEEP PRACTISING";
+try{localStorage.setItem("e4r",JSON.stringify({n:S.name,p,s:G.sc}))}catch(e){}
+const k=Object.keys(G.by),good=k.filter(i=>G.by[i].ok/G.by[i].n>=.7).map(i=>TOP[i]),low=k.filter(i=>G.by[i].ok/G.by[i].n<.7).map(i=>TOP[i]);
+A.innerHTML=`<div class=card><h1>🎉 Chúc mừng${S.name?", "+esc(S.name):""}!</h1><h2 class=c>${ti}</h2>
+<p class=c>Đã làm: <b>${n}</b> câu · Đúng: <b>${G.ok}</b> · Sai: <b>${G.no}</b> · Chính xác: <b>${p}%</b><br>Điểm: <b>${G.sc}/${G.rev?0:n*10}</b>${G.rev?" (ôn câu sai không tính điểm thử thách)":""} · Thời gian: <b>${Math.floor(sec/60)} phút ${sec%60} giây</b></p>
+<div class=bar><i style="width:${p}%"></i></div>
+${k.map(i=>`<p style="margin:8px 0 2px">${IC[i]} ${TOP[i]}: ${G.by[i].ok}/${G.by[i].n}</p><div class=bar><i style="width:${G.by[i].ok/G.by[i].n*100}%"></i></div>`).join("")}
+<p>✅ Làm tốt: ${good.join(", ")||"chưa có"}<br>📝 Cần luyện thêm: ${low.join(", ")||"không có"}</p>
+<div class="c np"><button class=b onclick="start(sh(G.list),G.mode,G.rev)">CHƠI LẠI</button><button onclick="review()">ÔN CÂU SAI</button><button onclick="topics()">CHỌN CHỦ ĐỀ KHÁC</button><button onclick="document.getElementById('wl').scrollIntoView({behavior:'smooth'})">XEM ĐÁP ÁN</button><button onclick="home()">VỀ TRANG CHỦ</button><button onclick="window.print()">IN KẾT QUẢ</button></div></div>
+<div class=card id=wl><h3>❌ Câu sai và đáp án đúng</h3>${G.wr.length?G.wr.map(q=>`<p><b>${q.id}</b> ${q.passage!=null?"<i>("+esc(P[q.passage])+")</i> ":""}${esc(q.q)}<br>→ <b>${esc(ans(q))}</b><br><small>${esc(q.explanation)}</small></p>`).join(""):"<p>Không có câu sai. Tuyệt vời! 🌟</p>"}</div>`;
+if(p>=75)stars()}
+home();
+</script></body></html>
